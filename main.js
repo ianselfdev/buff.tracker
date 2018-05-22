@@ -62,7 +62,7 @@ window.addEventListener('load', function () {
     // 'hero_item_cooldown_changed',
   ];
 
-  var match_id, game_started, game_ended, game_in_process, xpm, gpm, death, kill, assist, xpm, gpm, cs, player_team, winner_team, isWinner;
+  var match_id, game_started, game_ended, game_in_process, xpm, gpm, death, kill, assist, xpm, gpm, cs, player_team, winner_team, isWinner, gameRanked;
 
   function registerEvents() {
     // general events errors
@@ -88,7 +88,7 @@ window.addEventListener('load', function () {
 
 
 
-      for (var i = info.events.length - 1; i >= 0; i--) {
+      for (var i = info.events.length - 1; i >= 0; i--) { 
 
         var data_to_object = JSON.parse(info.events[i].data);
 
@@ -103,6 +103,10 @@ window.addEventListener('load', function () {
                   player_team = player.faction
                 }
               })
+              if (data_to_object.gameMode === 'AllPickRanked') {
+                gameRanked = true;
+              } else gameRanked = false;
+
           		break;
 
           	case "match_state_changed":
@@ -200,26 +204,80 @@ window.addEventListener('load', function () {
           console.log("GAME_END");
           console.log(match_id, game_started, game_ended, game_in_process);
           console.log(log);
-          var kda = (kill + assist) / death
+          var kda = (kill + assist) / death + 1;
+          var denies = cs.denies;
+          var last_hits = cs.last_hits;
+          var reward = 0;
+
+
           if(player_team == winner_team) {
-            isWinner = true
-          } else false
+            isWinner = true;
+          } else isWinner = false;
+
+          if (kda >= 4.0) reward += 15;
+          if (kda >= 3.7 && kda <= 3.9) reward += 13;
+          if (kda >= 3.5 && kda <= 3.6) reward += 11;
+          if (kda >= 3.2 && kda <= 3.4) reward += 8;
+          if (kda >= 2.9 && kda <= 3.1) reward += 4;
+          if (kda >= 2.6 && kda <= 2.8) reward += 3;
+          if (kda >= 1.5 && kda <= 2.5) reward += 2;
+
+
+          if (xpm >= 551) reward += 15;
+          if (xpm >= 501 && xpm <= 550) reward += 13;
+          if (xpm >= 451 && xpm <= 500) reward += 10;
+          if (xpm >= 401 && xpm <= 450) reward += 8;
+          if (xpm >= 351 && xpm <= 400) reward += 7;
+          if (xpm >= 301 && xpm <= 350) reward += 6;
+          if (xpm >= 250 && xpm <= 300) reward += 4;
+
+
+          if (gpm >= 551) reward += 15;
+          if (gpm >= 501 && gpm <= 550) reward += 13;
+          if (gpm >= 451 && gpm <= 500) reward += 10;
+          if (gpm >= 401 && gpm <= 450) reward += 8;
+          if (gpm >= 351 && gpm <= 400) reward += 7;
+          if (gpm >= 301 && gpm <= 350) reward += 6;
+          if (gpm >= 250 && gpm <= 300) reward += 4;
+
+          if (last_hits >= 250) reward += 5;
+          if (last_hits >= 225 && last_hits <= 249) reward += 5;
+          if (last_hits >= 200 && last_hits <= 224) reward += 4;
+          if (last_hits >= 175 && last_hits <= 199) reward += 4;
+          if (last_hits >= 150 && last_hits <= 174) reward += 3;
+          if (last_hits >= 125 && last_hits <= 149) reward += 3;
+          if (last_hits >= 100 && last_hits <= 124) reward += 2;
+
+          if (denies >= 70) reward += 5;
+          if (denies >= 60 && denies <= 69) reward += 5;
+          if (denies >= 50 && denies <= 59) reward += 4;
+          if (denies >= 40 && denies <= 49) reward += 4;
+          if (denies >= 30 && denies <= 39) reward += 3;
+          if (denies >= 20 && denies <= 29) reward += 3;
+          if (denies >= 10 && denies <= 19) reward += 2;
+
+          if (isWinner) reward += 45;
+
           var data = JSON.stringify({
             type: 'game_ended',
             body: {
-              id: match_id,  //  should be unique id in future, since there can be two gamers in the same game, but for now it is enough for testing
-              data: game_ended,
-              team: player_team,        
+              matchId: match_id,  
+              gameId: 7314,
+              gameRanked: gameRanked,
               xpm: xpm,
               gpm: gpm,
               kda: kda,
-              last_hits: cs.last_hits,
-              denies: cs.denies,
-              winner: isWinner
+              last_hits: last_hits,
+              denies: denies,
+              winner: isWinner,
+              reward: reward
             }
           });
 
           send_transaction(data);
+
+          console.log(data);
+
 
           game_in_process = false;
           game_started = undefined;
