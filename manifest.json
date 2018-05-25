@@ -2,13 +2,13 @@
   "manifest_version": "1",
   "type": "WebApp",
   "meta": {
-    "name": "Buff client",
+    "name": "Buff DOTA 2 App",
     "version": "0.0.2",
     "minimum-overwolf-version": "0.92.300.0",
     "author": "Overwolf",
     "icon": "icon.png",
     "icon_gray": "icon_gray.png",
-    "description": "Buff client"
+    "description": "Buff DOTA 2 client"
   },
   "permissions": [
     "GameInfo"
@@ -18,13 +18,13 @@
     "windows": {
       "index": {
         "file": "index.html",
-        "transparent": false,
+        "transparent": true,
         "clickthrough": false,
-        "resizable": true,
+        "resizable": false,
         "show_in_taskbar": true,
         "size": {
-          "width": 115,
-          "height": 135
+          "width": 220,
+          "height": 120
         },
         "start_position": {
           "Top": 10,

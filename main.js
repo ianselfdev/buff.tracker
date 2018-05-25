@@ -1,35 +1,166 @@
 window.addEventListener('load', function () {
 
+
+  alert(`If you're not logged in your Buff account you won't get game reward!`);
+
+  const senderIdInput = document.getElementById('senderId');
+  const passphraseInput = document.getElementById('passphrase');
+  const textarea = document.getElementById('msgTxtArea');
+  const validButton = document.getElementById('validUser');
+
+  var match_id, game_started, game_ended, game_in_process, xpm, gpm, death, kill, assist, xpm, gpm, cs, player_team, winner_team, isWinner, gameRanked, lastEventTimestamp, senderId, passphrase, publicKey, idle;
+
+  senderIdInput.onclick = function () {
+    if (senderIdInput.value === 'Put here your address') {
+      senderIdInput.value = "";
+    }
+  }
+
+  passphraseInput.onclick = function () {
+    if (passphraseInput.value === 'Put here your secret') {
+      passphraseInput.value = "";
+    }
+  }
+
+  validButton.onclick = function () {
+    if (senderIdInput.value != undefined && 
+      passphraseInput.value != undefined) {
+
+        senderId = senderIdInput.value;
+        passphrase = passphraseInput.value;
+
+        validSenderId(senderId, function (data) {
+          if (data.verified === true) {
+            validUser(publicKey, passphrase);  
+          } else {
+            textarea.value = 'Invalid address!';  
+          }
+        });
+    } else {
+      textarea.value = 'Empty fields!';
+    }
+  }
+
+
+
   // without signatures for now
-  function send_transaction(tx) {
+  function sendStartGameTrs(tx)  {
     var xhr = new XMLHttpRequest();
-    var url = "http://localhost:3000/txs";
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader("Content-type", "application/json");
+    var url = "http://18.219.35.208:4000/api/game-start";
+    xhr.open('put', url, true);
+    xhr.setRequestHeader('Content-Type','application/json');
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             console.log(JSON.parse(xhr.responseText));
         }
     };
-    console.log('SEND TX');
+    console.log('SEND START GAME TX');
     console.log(tx);
 
     xhr.send(tx);
   }
 
+  function sendEndGameTrs(tx) {
+    var xhr = new XMLHttpRequest();
+    var url = "http://18.219.35.208:4000/api/game-start";
+    xhr.open('put', url, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            console.log(JSON.parse(xhr.responseText));
+        }
+    };
+    console.log('SEND END GAME TX');
+    console.log(tx);
+
+    xhr.send(tx);
+  }
+
+  function changeState(state) {
+    var xhr = new XMLHttpRequest();
+    var url = "http://18.219.35.208:4000/api/game-start/state";
+    xhr.open('put', url, true);
+    xhr.setRequestHeader('Content-Type','application/json');
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            console.log(JSON.parse(xhr.responseText));
+        }
+    };
+
+    xhr.send(state);
+  }
+
+  function validSenderId(senderId, cb) {
+    var xhr = new XMLHttpRequest();
+    var url = `http://18.219.35.208:4000/api/accounts/getPublicKey?address=${senderId}`;
+    xhr.open('get', url, true);
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        var response = JSON.parse(xhr.responseText);
+        
+        if (response.success == true && response.publicKey) {
+          publicKey = response.publicKey;
+          return cb ({ verified: true });
+        } else {
+          textarea.value = 'Invalid address!';
+        }
+      } 
+    }
+    xhr.send({ address: senderId });
+  }
+
+  function validUser(userPubKey, userSecret, cb) {
+    var xhr = new XMLHttpRequest();
+    var url = "http://18.219.35.208:4000/api/game-start/verify";
+    xhr.open('put', url, true);
+    xhr.setRequestHeader('Content-Type','application/json');
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        var response = JSON.parse(xhr.responseText);
+
+        if (response.success == true && response.verified == true) {
+          passphrase = userSecret;
+          alert('Successfully logged in!');
+
+          senderIdInput.style.visibility = "hidden";
+          passphraseInput.style.visibility = "hidden";
+          textarea.style.visibility = "hidden";
+          validButton.style.visibility = "hidden";
+        } else {
+          textarea.value = response.error;
+        }
+      }
+    }
+    var req = JSON.stringify({ publicKey: userPubKey, passphrase: userSecret });
+    xhr.send(req);
+  }
+
+  function checkLastEvent() {
+    if (lastEventTimestamp != undefined && 
+      new Date().getTime() - lastEventTimestamp.getTime() >= 5 * 60000) {
+      console.log('Player is idle!');
+      idle = true;
+      changeState({ senderId: "aMKnhWqASk5BLLBezNyC4misnVf6et16eL", state: 'idle' });
+    } else {
+      if (lastEventTimestamp) {
+        var timeDif = new Date().getTime() - lastEventTimestamp.getTime();
+        console.log('Last event timestamp ' + (timeDif / 600) + 's ago');
+      } else {
+        console.log('No events available...');
+      }
+    }
+  }
+
   console.log('Buff App Started');
 
-  var textarea = document.getElementById('textareaMessage');
-
   var requestedFeatures = [
-
     'kill',
     'death',
     'hero_ability_used',
     'game_state_changed',
     'match_detected',
     'match_state_changed',
-    'match_detected', // not available in the documentation(
+    'match_detected',
     'match_ended',
     'daytime_changed',
     'ward_purchase_cooldown_changed',
@@ -37,56 +168,29 @@ window.addEventListener('load', function () {
     'death',
     'cs',
     'roster',
-    // 'hero_picked',
-    // 'hero_leveled_up',
-    // 'hero_respawned',
-    // 'hero_boughtback',
-    // 'hero_status_effect_changed',
-    // 'hero_attributes_skilled',
     'hero_ability_skilled',
     'hero_ability_used',
     'hero_ability_changed',
-    // 'hero_item_changed',
-    // 'hero_item_used',
-    // 'hero_item_consumed',
-    // 'hero_item_charged'
-
-    // these are also supported but spam the console as they happen a lot:
-    // 'clock_time_changed',
     'xpm',
-    'gpm',
-    // 'gold',
-    // 'hero_buyback_info_changed',
-    // 'hero_health_mana_info',
-    // 'hero_ability_cooldown_changed',
-    // 'hero_item_cooldown_changed',
+    'gpm'
   ];
 
-  var match_id, game_started, game_ended, game_in_process, xpm, gpm, death, kill, assist, xpm, gpm, cs, player_team, winner_team, isWinner, gameRanked;
-
   function registerEvents() {
-    // general events errors
+  
     overwolf.games.events.onError.addListener(function(info) {
       var log = 'Error: ' + JSON.stringify(info);
       textarea.value += log + '\n';
-      //console.log('Error: ' + JSON.stringify(info));
     });
 
-    // 'static' data changed (total kills, username, steam-id)
-    // This will also be triggered the first time we register
-    // for events and will contain all the current information
     overwolf.games.events.onInfoUpdates2.addListener(function(info) {
       var log = 'Info UPDATE: ' + JSON.stringify(info);
       textarea.value += log + '\n';
-      //console.log(log);
     });
 
-    // an event triggerd
     overwolf.games.events.onNewEvents.addListener(function(info) {
       var log = 'EVENT FIRED: ' + JSON.stringify(info);
       textarea.value += log + '\n';
-
-
+      lastEventTimestamp = new Date();
 
       for (var i = info.events.length - 1; i >= 0; i--) { 
 
@@ -94,8 +198,6 @@ window.addEventListener('load', function () {
 
         switch(info.events[i].name) {
         	case "match_detected": 
-          		console.log(match_id, game_started, game_ended, game_in_process);
-          		console.log("match_detected");
           		console.log(log);
               var allPlayers = data_to_object.match_detected.playersInfo
               allPlayers.forEach((player,index) => {
@@ -113,16 +215,31 @@ window.addEventListener('load', function () {
           		if(!game_started 
           			&& !game_in_process 
           			&& data_to_object.match_state == "DOTA_GAMERULES_STATE_GAME_IN_PROGRESS") {
-          			console.log(1);
-					console.log(match_id, game_started, game_ended, game_in_process);
-					console.log(log);
-          			game_started = data_to_object
+      					console.log(log);
+          			game_started = data_to_object;
+
+                var gamedata = {
+                  "gameId": 7314,
+                  "matchId": 1,
+                  "rankedGame": true,
+                }
+
+                var recipientId = "aMKnhWqASk5BLLBezNyC4misnVf6et16eL";
+                var secret = "assume harbor must knee shoulder file already apart today october target range";
+
+                var startGameTrs = JSON.stringify({
+                  gamedata: gamedata,
+                  recipientId: recipientId,
+                  secret: secret
+                });
+
+                console.log(startGameTrs);
+
+                sendStartGameTrs(startGameTrs);
           		}
           		break;
 
           	case "match_ended":
-          		console.log(2);
-         		  console.log(match_id, game_started, game_ended, game_in_process);
          		  console.log(log);
           		game_ended = data_to_object
               winner_team = game_ended.winner
@@ -130,8 +247,6 @@ window.addEventListener('load', function () {
 
           	case "game_state_changed":
           		if(!match_id && data_to_object.match_id) {
-          			console.log(3);
-          			console.log(match_id, game_started, game_ended, game_in_process);
           			console.log(log);
           			match_id = data_to_object.match_id
           		}
@@ -139,23 +254,20 @@ window.addEventListener('load', function () {
 
           	case "kill":
           		console.log("KILL");
-        		console.log(match_id,game_started,game_ended,game_in_process, kills);
         		console.log(log);
-        		kill = data_to_object.kills
+        		kill = data_to_object.kill.kills;
         		break;
 
         	case "assist":
         		console.log("ASSIST");
-        		console.log(match_id,game_started,game_ended,game_in_process, assist);
         		console.log(log);
-        		assist = data_to_object.assists
+        		assist = data_to_object.assist.assists;
         		break;
 
         	case "death":
         		console.log("DEATH");
-        		console.log(match_id,game_started,game_ended,game_in_process, death);
         		console.log(log);
-        		death = data_to_object.deaths
+        		death = data_to_object.death.deaths;
         		break;
 
         	case "xpm":
@@ -180,22 +292,7 @@ window.addEventListener('load', function () {
         }
 
         if (match_id && game_started && !game_in_process) {
-          console.log(4);
-
-          console.log(match_id, game_started, game_ended, game_in_process);
-
           console.log(log);
-          
-          var data = JSON.stringify({
-            type: 'game_started',
-            body: {
-              id: match_id,  //  should be unique id in future, since there can be two gamers in the same game, but for now it is enough for testing
-              data: game_started
-            }
-          });
-
-          send_transaction(data);
-
           game_in_process = true;
         }
 
@@ -258,12 +355,10 @@ window.addEventListener('load', function () {
 
           if (isWinner) reward += 45;
 
-          var data = JSON.stringify({
-            type: 'game_ended',
-            body: {
-              matchId: match_id,  
+          var gamedata = {            
+              matchId: 1,  
               gameId: 7314,
-              gameRanked: gameRanked,
+              gameRanked: true,
               xpm: xpm,
               gpm: gpm,
               kda: kda,
@@ -271,12 +366,20 @@ window.addEventListener('load', function () {
               denies: denies,
               winner: isWinner,
               reward: reward
-            }
+          };
+
+          var recipientId = "aMKnhWqASk5BLLBezNyC4misnVf6et16eL";
+          var secret = "assume harbor must knee shoulder file already apart today october target range";
+
+          var endGameTrs = JSON.stringify({
+            gamedata: gamedata,
+            recipientId: recipientId,
+            secret: secret
           });
 
-          send_transaction(data);
+          console.log(endGameTrs);
 
-          console.log(data);
+          sendEndGameTrs(endGameTrs);        
 
 
           game_in_process = false;
@@ -306,7 +409,6 @@ window.addEventListener('load', function () {
             return false;
         }
 
-        // NOTE: we divide by 10 to get the game class id without it's sequence number
         if (Math.floor(gameInfoResult.gameInfo.id/10) != 7314) {
             return false;
         }
@@ -326,7 +428,6 @@ window.addEventListener('load', function () {
             return false;
         }
 
-        // NOTE: we divide by 10 to get the game class id without it's sequence number
         if (Math.floor(gameInfo.id/10) != 7314) {
             return false;
         }
@@ -339,25 +440,24 @@ window.addEventListener('load', function () {
 
     function setFeatures() {
         overwolf.games.events.setRequiredFeatures(requestedFeatures, function(info) {
-            if (info.status == "error")
-            {
-                //console.log("Could not set required features: " + info.reason);
-                //console.log("Trying in 2 seconds");
+            if (info.status == "error") {
                 window.setTimeout(setFeatures, 2000);
                 return;
             }
-
-            //console.log("Set required features:");
-            //console.log(JSON.stringify(info));
         });
     }
 
 
 // Start here
     overwolf.games.onGameInfoUpdated.addListener(function (res) {
-        //console.log("onGameInfoUpdated: " + JSON.stringify(res));
         if (gameLaunched(res)) {
             registerEvents();
+            setInterval(function() {
+              if(!idle) {
+                console.log('Checking last event timestamp...');
+                checkLastEvent();
+              }
+            }, 1000 * 60);
             setTimeout(setFeatures, 1000);
         }
     });
@@ -367,6 +467,5 @@ window.addEventListener('load', function () {
             registerEvents();
             setTimeout(setFeatures, 1000);
         }
-        //console.log("getRunningGameInfo: " + JSON.stringify(res));
     });
 });
