@@ -7,8 +7,28 @@ window.addEventListener('load', function () {
   const passphraseInput = document.getElementById('passphrase');
   const textarea = document.getElementById('msgTxtArea');
   const validButton = document.getElementById('validUser');
+  const buffIcon = document.getElementById('buffIcon');
+  const buffTitle = document.getElementById('title');
 
-  var match_id, game_started, game_ended, game_in_process, xpm, gpm, death, kill, assist, xpm, gpm, cs, player_team, winner_team, isWinner, gameRanked, lastEventTimestamp, senderId, passphrase, publicKey, idle;
+  var match_id, game_started, game_ended, game_in_process, xpm, gpm, death, kill, assist, xpm, gpm, cs, player_team, winner_team, isWinner, gameRanked, lastEventTimestamp, senderId, passphrase, publicKey, idle, hidden;
+
+  buffIcon.onclick = function () {
+    if (!hidden) {
+      hidden = true;
+      senderIdInput.style.visibility = "hidden";
+      passphraseInput.style.visibility = "hidden";
+      textarea.style.visibility = "hidden";
+      validButton.style.visibility = "hidden";
+      buffTitle.style.visibility = "hidden";
+    } else {
+      hidden = false;
+      senderIdInput.style.visibility = "visible";
+      passphraseInput.style.visibility = "visible";
+      textarea.style.visibility = "visible";
+      validButton.style.visibility = "visible";
+      buffTitle.style.visibility = "visible";
+    }
+  }
 
   senderIdInput.onclick = function () {
     if (senderIdInput.value === 'Put here your address') {

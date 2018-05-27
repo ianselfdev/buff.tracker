@@ -15,6 +15,9 @@
 	    top: 5%;
 	    left: 5%;
 	}
+	#buffIcon:focus { 
+		outline: none; 
+	}
 </style>
 <body>
 	<div id="menu">
@@ -22,7 +25,10 @@
 		<input type="text" style="width: 180; height: 25; margin-bottom: 10px;" value="Put here your address" id="senderId">
 		<input type="text" style="width: 180; height: 25; margin-bottom: 10px;" value="Put here your secret" id="passphrase">
 		<textarea disabled style="resize: none; width: 180px; height: 25px;" id="msgTxtArea"></textarea>
-		<div><button id="validUser" style="width: 100px; height: 25px; margin-top: 10px; border-radius: 7px; margin-left: 10%;">Apply</button></div>
+		<div>
+			<button id="validUser" style="width: 100px; height: 25px; margin-top: 10px; border-radius: 7px;">Apply</button>
+			<input type="image" id="buffIcon" src="buff.png" style="width: 25px; height: 25px; border-radius: 12px; margin-left: 10%; margin-top: 10px; "></button>
+		</div>
 	</div>	
 </body>
 </html>

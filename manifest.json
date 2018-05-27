@@ -18,17 +18,17 @@
     "windows": {
       "index": {
         "file": "index.html",
-        "transparent": true,
+        "transparent": false,
         "clickthrough": false,
         "resizable": false,
         "show_in_taskbar": true,
         "size": {
           "width": 220,
-          "height": 120
+          "height": 200
         },
         "start_position": {
-          "Top": 10,
-          "Left": 10
+          "Top": 200,
+          "Left": 200
         }
       }
     },
