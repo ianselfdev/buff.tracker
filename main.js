@@ -25,9 +25,8 @@ window.addEventListener('load', function () {
     loggedIn,
     publicKey,
     idle,
+    matchId,
     allPlayers;
-
-  var matchId = 1;
   
   buffIcon.onclick = function () {
     if (!hidden) {
