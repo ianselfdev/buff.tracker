@@ -19,7 +19,7 @@ window.addEventListener('load', function () {
     level,
     victory,
     lastEventTimestamp,
-    gameRanked,
+    rankedGame,
     senderId,
     passphrase,
     loggedIn,
@@ -71,8 +71,7 @@ window.addEventListener('load', function () {
     } else {
       textarea.value = 'Empty fields!';
     }
-  }  
-
+  }
 
   function sendStartGameTrs(tx) {
     var xhr = new XMLHttpRequest();
@@ -200,8 +199,7 @@ window.addEventListener('load', function () {
     'minions',
     'level',
     'abilities',
-    'announcer',
-    'gold'
+    'announcer'
   ];
 
   function registerEvents() {
@@ -215,182 +213,185 @@ window.addEventListener('load', function () {
       textarea.value += log + '\n';
       lastEventTimestamp = new Date();
 
-      for (var i = info.length - 1; i >= 0; --i) {
-        var data_to_object = JSON.parse(info);
+      var data_to_object = info;
 
-        switch (data_to_object.feature) {
-          case "gameMode": 
-            console.log("GAME_MODE");
-            console.log(data_to_object.game_info.gameMode);
-            // if (data_to_object.game_info.gameMode == 'ranked') {
-              // gameRanked = true;
-            // }
+      switch (data_to_object.feature) {
+        case "gameMode": 
+          console.log("GAME_MODE");
+          if (
+            data_to_object.info && 
+            data_to_object.game_info &&
+            data_to_object.info.game_info.gameMode
+          ) {  
+              console.log(data_to_object.info.game_info.gameMode);
+          }
+          // if (data_to_object.game_info.gameMode == 'ranked') {
+            // rankedGame = true;
+          // }
 
-          case "matchState": 
-            if (!gameStarted && 
-              !gameInProcess &&
-              data_to_object.game_info.matchStarted == true) {
-              console.log("MATCH_STARTED");
-              gameStarted = true;
-            }
-
-            if (gameStarted &&
-              gameInProcess &&
-              data_to_object.game_info.matchOutcome) {
-              console.log("MATCH_ENDED");
-              victory = data_to_object.game_info.matchOutcome;
-              gameEnded = true;
-            }
-
-            break;
-
-          case "gold":
-            console.log("GOLD");
-            gold = data_to_object.game_info.gold;
-            console.log(gold);
-            break;
-
-          case "minions":
-            if (data_to_object.game_info.minionKills != undefined) {
-              console.log("MINION KILLS");
-              minionKills = data_to_object.game_info.minionKills;
-              console.log(minionKills);
-            }  
-            break;  
-
-          case "level":
-            console.log("LEVEL");
-            level = data_to_object.level.level;
-            console.log(level);
-            break;
-
-          case "kill":
-            console.log("KILLS");
-            kills = data_to_object.game_info.kills;
-            console.log(kills);
-            break;
-
-          case "death":
-            console.log("DEATHS");
-            deaths = data_to_object.game_info.deaths;
-            console.log(deaths);
-            break;
-        }
-
-        if (gameStarted && !gameInProcess) {
-          var gamedata = {
-            "gameId": 5426,
-            "matchId": matchId,
-            "rankedGame": true
+        case "matchState": 
+          if (
+            !gameStarted &&
+            !gameInProcess &&
+            data_to_object.info &&
+            data_to_object.info.game_info &&
+            data_to_object.info.game_info.matchStarted
+          ) {
+            console.log("MATCH_STARTED");
+            gameStarted = true;
           }
 
-          var recipientId = senderId;
-          var secret = passphrase;
+          if (
+            gameStarted &&
+            gameInProcess &&
+            data_to_object.info &&
+            data_to_object.info.game_info &&
+            data_to_object.info.game_info.matchOutcome
+          ) {
+            console.log("MATCH_ENDED");
+            victory = data_to_object.info.game_info.matchOutcome;
+            gameEnded = true;
 
-          var startGameTrs = JSON.stringify({
-            gamedata: gamedata,
-            recipientId: recipientId,
-            secret: secret
-          });
+            if (gameEnded && gameInProcess) {
+              console.log("GAME_END");
 
-          console.log(startGameTrs);
+              var isWinner;
 
-          sendStartGameTrs(startGameTrs);
+              if (victory == 'win') {
+                isWinner = true;
+              } else {
+                isWinner = false;
+              }
 
-          gameInProcess = true;
+              kills = kills ? kills : 0;
+              assists = assists ? assists : 0;
+              deaths = deaths ? deaths : 0;
+              minionKills = minionKills ? minionKills : 0;
+
+              console.log("------------------------");
+              console.log("COUNT KDA");
+              console.log("KILLS");
+              console.log(kills);
+              console.log("ASSISTS");
+              console.log(assists);
+              console.log("DEATHS");
+              console.log(deaths);
+              console.log("------------------------");
+
+              var kda = (kills + assists) / (deaths + 1);
+
+              var reward = 0;
+
+              if (kda >= 4.0) reward += 20;
+              if (kda >= 3.7 && kda <= 3.9) reward += 17;
+              if (kda >= 3.5 && kda <= 3.6) reward += 14;
+              if (kda >= 3.2 && kda <= 3.4) reward += 12;
+              if (kda >= 2.9 && kda <= 3.1) reward += 7;
+              if (kda >= 2.6 && kda <= 2.8) reward += 5;
+              if (kda >= 1.5 && kda <= 2.5) reward += 2;
+
+              if (minionKills >= 300) reward += 20;
+              if (minionKills >= 276 && minionKills <= 299) reward += 17;
+              if (minionKills >= 251 && minionKills <= 275) reward += 14;
+              if (minionKills >= 226 && minionKills <= 250) reward += 12;
+              if (minionKills >= 201 && minionKills <= 225) reward += 10;
+              if (minionKills >= 176 && minionKills <= 200) reward += 7;
+              if (minionKills >= 151 && minionKills <= 175) reward += 4;
+              if (minionKills >= 126 && minionKills <= 150) reward += 2;
+
+              if (level >= 18) reward += 15;
+              if (level >= 16 && level <= 17) reward += 12;
+              if (level >= 14 && level <= 15) reward += 10;
+              if (level >= 12 && level <= 13) reward += 8;
+              if (level >= 10 && level <= 11) reward += 6;
+
+              if (isWinner) reward += 45;
+
+              var gamedata = {
+                matchId: 1,
+                gameId: 5426,
+                rankedGame: true,
+                kda: kda,
+                minion_kills: minionKills,
+                level: level,
+                victory: isWinner,
+                reward: reward
+              };
+
+              var recipientId = senderId;
+              var secret = passphrase;
+
+              console.log('SENDING END GAME TRS');
+
+              var endGameTrs = JSON.stringify({
+                gamedata: gamedata,
+                recipientId: recipientId,
+                secret: secret
+              });
+
+              console.log(endGameTrs);
+
+              sendEndGameTrs(endGameTrs);
+
+              gameInProcess = false;
+              gameStarted = undefined;
+              gameEnded = undefined;
+              kills = 0;
+              assists = 0;
+              deaths = 0;
+              minionKills = 0;
+              level = 0;
+            }
+          }
+          break;
+
+        case "minions":
+          console.log("MINION KILLS");
+          minionKills = data_to_object.info.game_info.minionKills;
+          console.log(minionKills);
+
+          break;  
+
+        case "level":
+          console.log("LEVEL");
+          level = data_to_object.info.level.level;
+          console.log(level);
+          break;
+
+        case "kill":
+          console.log("KILLS");
+          kills = data_to_object.info.game_info.kills;
+          console.log(kills);
+          break;
+
+        case "death":
+          console.log("DEATHS");
+          deaths = data_to_object.info.game_info.deaths;
+          console.log(deaths);
+          break;
+      }
+
+      if (gameStarted && !gameInProcess) {
+        var gamedata = {
+          "gameId": 5426,
+          "matchId": matchId,
+          "rankedGame": true
         }
 
-        if (gameEnded && gameInProcess) {
-          console.log("GAME_END");
+        var recipientId = senderId;
+        var secret = passphrase;
 
-          var isWinner;
+        var startGameTrs = JSON.stringify({
+          gamedata: gamedata,
+          recipientId: recipientId,
+          secret: secret
+        });
 
-          if (victory == 'win') {
-            isWinner = true;
-          } else {
-            isWinner = false;
-          };
+        console.log(startGameTrs);
 
-          kills = kills ? kills : 0;
-          assists = assists ? assists : 0;
-          deaths = deaths ? deaths : 0;
-          minionKills = minionKills ? minionKills : 0;
+        sendStartGameTrs(startGameTrs);
 
-          var kda = (kills + assists) / (deaths + 1);
-
-          var reward = 0;
-
-          if (gold >= 15000) reward += 15;
-          if (gold >= 12001 && gold <= 14999) reward += 13;
-          if (gold >= 10001 && gold <= 12000) reward += 10;
-          if (gold >= 8001 && gold <= 10000) reward += 8;
-          if (gold >= 6001 && gold <= 8000) reward += 7;
-          if (gold >= 4001 && gold <= 6000) reward += 6;
-          if (gold >= 3001 && gold <= 4000) reward += 4;
-
-          if (kda >= 4.0) reward += 15;
-          if (kda >= 3.7 && kda <= 3.9) reward += 13;
-          if (kda >= 3.5 && kda <= 3.6) reward += 11;
-          if (kda >= 3.2 && kda <= 3.4) reward += 8;
-          if (kda >= 2.9 && kda <= 3.1) reward += 4;
-          if (kda >= 2.6 && kda <= 2.8) reward += 3;
-          if (kda >= 1.5 && kda <= 2.5) reward += 2;
-
-          if (minionKills >= 300) reward += 15;
-          if (minionKills >= 276 && minionKills <= 299) reward += 13;
-          if (minionKills >= 251 && minionKills <= 275) reward += 10;
-          if (minionKills >= 226 && minionKills <= 250) reward += 8;
-          if (minionKills >= 201 && minionKills <= 225) reward += 7;
-          if (minionKills >= 176 && minionKills <= 200) reward += 6;
-          if (minionKills >= 151 && minionKills <= 175) reward += 4;
-          if (minionKills >= 126 && minionKills <= 150) reward += 2;
-
-          if (level >= 18) reward += 10;
-          if (level >= 16 && level <= 17) reward += 9;
-          if (level >= 14 && level <= 15) reward += 8;
-          if (level >= 12 && level <= 13) reward += 6;
-          if (level >= 10 && level <= 11) reward += 4;
-
-          if (isWinner) reward += 45;
-
-          var gamedata = {
-            matchId: 1,
-            gameId: 5426,
-            gameRanked: true,
-            gold: gold,
-            kda: kda,
-            minion_kills: minionKills,
-            level: level,
-            victory: isWinner,
-            reward: reward
-          };
-
-          var recipientId = senderId;
-          var secret = passphrase;
-
-          console.log('SENDING END GAME TRS');
-
-          var endGameTrs = JSON.stringify({
-            gamedata: gamedata,
-            recipientId: recipientId,
-            secret: secret
-          });
-
-          console.log(endGameTrs);
-
-          sendEndGameTrs(endGameTrs);
-
-          gameInProcess = false;
-          gameStarted = undefined;
-          gameEnded = undefined;
-          kills = 0;
-          assists = 0;
-          deaths = 0;
-          gold = 0;
-          minionKills = 0;
-          level = 0;
-        }
-
+        gameInProcess = true;
       }
     });
 
@@ -399,14 +400,13 @@ window.addEventListener('load', function () {
       textarea.value += log + '\n';
       lastEventTimestamp = new Date();
 
+      console.log(info);
       for (var i = info.events.length - 1; i >= 0; i--) {
-
-        var data_to_object = JSON.stringify(info.events[i]);
 
         switch(info.events[i].name) {
           case "assist":
             console.log("ASSISTS");
-            assists = data_to_object.data;
+            assists = JSON.parse(info.events[i].data).count;
             console.log(assists);
             break;
         }
@@ -469,9 +469,6 @@ window.addEventListener('load', function () {
         window.setTimeout(setFeatures, 2000);
         return;
       }
-
-      console.log("Set required features:");
-      console.log(JSON.stringify(info));
     });
   }
 
@@ -480,12 +477,12 @@ window.addEventListener('load', function () {
   overwolf.games.onGameInfoUpdated.addListener(function (res) {
     if (gameLaunched(res)) {
       registerEvents();
-      setInterval(function() {
-        if(!idle) {
-          console.log('Checking last event timestamp...');
-          checkLastEvent();
-        }
-      }, 1000 * 60);
+      // setInterval(function() {
+      //   if(!idle) {
+      //     console.log('Checking last event timestamp...');
+      //     checkLastEvent();
+      //   }
+      // }, 1000 * 60);
       setTimeout(setFeatures, 1000);
     }
     console.log("onGameInfoUpdated: " + JSON.stringify(res));
