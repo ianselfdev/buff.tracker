@@ -1,10 +1,34 @@
 <html>
 <head>
-  <title>BUFF LoL App</title>
+  <title>BUFF</title>
   <script src="main.js"></script>
 </head>
+<style type="text/css">
+	body {
+	    font-family: 'Helvetica', 'Arial', sans-serif;
+	    color: #151c26;
+	    font-size: 9pt;
+	}
+
+	#menu {
+	    position: absolute;
+	    top: 5%;
+	    left: 5%;
+	}
+	#buffIcon:focus { 
+		outline: none; 
+	}
+</style>
 <body>
- 	<h3 id="title"> LoL App </h3>	
- 	<textarea id="textareaMessage" rows="10" readonly="true"></textarea>
+	<div id="menu">
+		<h3 id="title" style="margin-left: 10%">Buff Application</h3>
+		<input type="text" style="width: 180; height: 25; margin-bottom: 10px;" placeholder="Put here your address" id="senderId">
+		<input type="text" style="width: 180; height: 25; margin-bottom: 10px;" placeholder="Put here your secret" id="passphrase">
+		<textarea disabled style="resize: none; width: 180px; height: 25px;" id="msgTxtArea"></textarea>
+		<div>
+			<button id="validUser" style="width: 100px; height: 25px; margin-top: 10px; border-radius: 7px;">Apply</button>
+			<input type="image" id="buffIcon" src="buff.png" style="width: 25px; height: 25px; border-radius: 12px; margin-left: 10%; margin-top: 10px; "></button>
+		</div>
+	</div>	
 </body>
 </html>
