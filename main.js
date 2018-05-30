@@ -11,7 +11,6 @@ window.addEventListener('load', function () {
   var gameStarted,
     gameEnded,
     gameInProcess,
-    gold,
     kills,
     deaths,
     assists,
@@ -25,7 +24,6 @@ window.addEventListener('load', function () {
     loggedIn,
     publicKey,
     idle,
-    matchId,
     allPlayers;
   
   buffIcon.onclick = function () {
@@ -214,6 +212,7 @@ window.addEventListener('load', function () {
 
       var data_to_object = info;
 
+      console.log(info);
       switch (data_to_object.feature) {
         case "gameMode": 
           console.log("GAME_MODE");
@@ -266,6 +265,7 @@ window.addEventListener('load', function () {
               assists = assists ? assists : 0;
               deaths = deaths ? deaths : 0;
               minionKills = minionKills ? minionKills : 0;
+              level = level ? level : 0;
 
               console.log("------------------------");
               console.log("COUNT KDA");
@@ -372,9 +372,9 @@ window.addEventListener('load', function () {
 
       if (gameStarted && !gameInProcess) {
         var gamedata = {
-          "gameId": 5426,
-          "matchId": matchId,
-          "rankedGame": true
+          gameId: 5426,
+          matchId: 1,
+          rankedGame: true
         }
 
         var recipientId = senderId;
