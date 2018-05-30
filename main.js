@@ -19,7 +19,7 @@ window.addEventListener('load', function () {
     lastHits,
     denies,
     playerTeam,
-    gameRanked,
+    rankedGame,
     lastEventTimestamp,
     senderId,
     passphrase,
@@ -251,9 +251,9 @@ window.addEventListener('load', function () {
             })
 
             if (data_to_object.gameMode === 'AllPickRanked') {
-              gameRanked = true;
+              rankedGame = true;
             } else {
-              gameRanked = false;
+              rankedGame = false;
             }
 
             break;
@@ -557,14 +557,15 @@ window.addEventListener('load', function () {
   overwolf.games.onGameInfoUpdated.addListener(function (res) {
     if (gameLaunched(res)) {
       registerEvents();
-      setInterval(function() {
-        if(!idle) {
-          console.log('Checking last event timestamp...');
-          checkLastEvent();
-        }
-      }, 1000 * 60);
+      // setInterval(function() {
+      //   if(!idle) {
+      //     console.log('Checking last event timestamp...');
+      //     checkLastEvent();
+      //   }
+      // }, 1000 * 60);
       setTimeout(setFeatures, 1000);
     }
+    console.log("onGameInfoUpdated: " + JSON.stringify(res));
   });
 
   overwolf.games.getRunningGameInfo(function (res) {
@@ -572,5 +573,6 @@ window.addEventListener('load', function () {
       registerEvents();
       setTimeout(setFeatures, 1000);
     }
+    console.log("getRunningGameInfo: " + JSON.stringify(res));
   });
 });
