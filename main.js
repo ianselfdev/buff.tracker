@@ -242,7 +242,7 @@ window.addEventListener('load', function () {
           case "match_detected": 
             console.log("INTERESTING IF EVER HAPPENS!!!!")
             
-            var allPlayers = data_to_object.match_detected.playersInfo
+            allPlayers = data_to_object.match_detected.playersInfo
             
             allPlayers.forEach((player,index) => {
               if(player.isLocalPlayer == true) {
@@ -301,20 +301,22 @@ window.addEventListener('load', function () {
             
               var winnerTeam = gameEnded.winner;
 
-              allPlayers.forEach( function(player) {
-                if (player.steamId === steamId) {
-                  
-                  if (player.team == 2) {
-                    playerTeam = 'radiant';
-                  } 
-                  else if (playerTeam == 3) {
-                    playerTeam = 'dire';
-                  } 
-                  else {
-                    playerTeam = undefined;
+              if (allPlayers) {
+                allPlayers.forEach( function(player) {
+                  if (player.steamId === steamId) {
+                    
+                    if (player.team == 2) {
+                      playerTeam = 'radiant';
+                    } 
+                    else if (playerTeam == 3) {
+                      playerTeam = 'dire';
+                    } 
+                    else {
+                      playerTeam = undefined;
+                    }
                   }
-                }
-              });
+                });
+              }
 
               kills = kills ? kills : 0;
               assists = assists ? assists: 0;
@@ -410,6 +412,7 @@ window.addEventListener('load', function () {
               deaths = 0;
               lastHits = 0;
               denies = 0;
+              playerTeam = undefined;
               allPlayers = undefined;
             }
 
@@ -417,11 +420,13 @@ window.addEventListener('load', function () {
 
           case "game_state_changed":
             if(!matchId && data_to_object.match_id) {
-              console.log("MATCH_ID");
-              // matchId = data_to_object.match_id
-              steamId = data_to_object.player_steam_id;
+              matchId = data_to_object.match_id
               console.log('MATCH_ID');
               console.log(matchId);
+            }
+
+            if (!steamId && data_to_object.player_steam_id) {
+              steamId = data_to_object.player_steam_id;
               console.log('STEAM_ID');
               console.log(steamId);
             }
