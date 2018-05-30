@@ -292,6 +292,7 @@ window.addEventListener('load', function () {
 
       var data_to_object = info;
 
+      console.log(info);
       switch (data_to_object.feature) {
         case "gameMode": 
           console.log("GAME_MODE");
@@ -343,6 +344,7 @@ window.addEventListener('load', function () {
               lolParams[kills] = lolParams[kills] ? lolParams[kills] : 0;
               lolParams[assists] = lolParams[assists] ? lolParams[assists] : 0;
               lolParams[deaths] = lolParams[deaths] ? lolParams[deaths] : 0;
+              lolParams[level] = lolParams[level] ? lolParams[level] : 0;
               lolParams[minionKills] = lolParams[minionKills] ? lolParams[minionKills] : 0;
 
               console.log("------------------------");
@@ -450,9 +452,9 @@ window.addEventListener('load', function () {
 
       if (lolParams[gameStarted] && !(lolParams[gameInProcess])) {
         var gamedata = {
-          "gameId": 5426,
-          "matchId": matchId,
-          "rankedGame": true
+          gameId: 5426,
+          matchId: 1,
+          rankedGame: true
         }
 
         var recipientId = senderId;
