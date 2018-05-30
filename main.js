@@ -379,7 +379,7 @@ window.addEventListener('load', function () {
               var gamedata = {            
                 matchId: 1,  
                 gameId: 7314,
-                gameRanked: true,
+                rankedGame: true,
                 xpm: xpm,
                 gpm: gpm,
                 kda: kda,
