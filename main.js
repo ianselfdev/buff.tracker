@@ -28,9 +28,10 @@ window.addEventListener('load', function () {
     idle,
     hidden,
     allPlayers,
-    steamId;
+    steamId,
+    matchId;
 
-  var matchId = 1;
+var matchId = 1;
 
   buffIcon.onclick = function () {
     if (!hidden) {
@@ -221,7 +222,12 @@ window.addEventListener('load', function () {
       var log = 'Info UPDATE: ' + JSON.stringify(info);
       textarea.value += log + '\n';
       
-      if(info.info.roster.players != undefined) {
+      if(
+        info.info &&
+        info.info.roster && 
+        info.info.roster.players
+      ) {
+        console.log(info.info.roster.players);
         allPlayers = JSON.parse(info.info.roster.players);  
       }  
     });
@@ -419,6 +425,7 @@ window.addEventListener('load', function () {
             break;
 
           case "game_state_changed":
+            if (data_to_object.match_id) console.log("MATH IDIDIIDID - ", data_to_object.match_id);
             if(!matchId && data_to_object.match_id) {
               matchId = data_to_object.match_id
               console.log('MATCH_ID');
