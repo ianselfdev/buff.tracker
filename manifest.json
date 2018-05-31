@@ -2,7 +2,7 @@
   "manifest_version": "1",
   "type": "WebApp",
   "meta": {
-    "name": "Buff client",
+    "name": "Buff Achievement Tracker",
     "version": "0.0.2",
     "minimum-overwolf-version": "0.92.300.0",
     "author": "Overwolf",
@@ -19,16 +19,16 @@
       "index": {
         "file": "index.html",
         "transparent": false,
-        "clickthrough": false,
+        "clickthrough": true,
         "resizable": true,
         "show_in_taskbar": true,
         "size": {
-          "width": 115,
-          "height": 135
+          "width": 320,
+          "height": 400
         },
         "start_position": {
-          "Top": 10,
-          "Left": 10
+          "Top": 100,
+          "Left": 100
         }
       }
     },
@@ -43,6 +43,7 @@
           ]
         },
         "start_minimized": false
-      }]
-}
+      }
+    ]
+  }
 }
