@@ -158,8 +158,6 @@ window.addEventListener('load', function () {
       }
     };
     console.log('SEND START GAME TX');
-    console.log(tx);
-
     xhr.send(tx);
   }
 
@@ -174,8 +172,6 @@ window.addEventListener('load', function () {
       }
     };
     console.log('SEND END GAME TX');
-    console.log(tx);
-
     xhr.send(tx);
   }
 
@@ -189,7 +185,6 @@ window.addEventListener('load', function () {
         console.log(JSON.parse(xhr.responseText));
       }
     };
-
     xhr.send(state);
   }
 
@@ -244,33 +239,28 @@ window.addEventListener('load', function () {
   function getLolEvents() {
     console.log('REGISTERING DOTA EVENTS');
     overwolf.games.events.onError.addListener(function(info) {
-      console.log('lol current 1 game?', currentGame);
       if (currentGame == 'League of Legends') {
         console.log('Error: ' + JSON.stringify(info));
       }
     });
 
     overwolf.games.events.onInfoUpdates2.addListener(function(info) {
-      console.log('lol current 2 game?', currentGame);
       if (currentGame == 'League of Legends') {
         var log = 'FEATURE: ' + JSON.stringify(info);
 
         var data_to_object = info;
 
-        console.log(info);
         switch (data_to_object.feature) {
           case 'gameMode': 
-            console.log('GAME_MODE');
+            console.log('GAME MODE');
             if (
               data_to_object.info && 
               data_to_object.game_info &&
               data_to_object.info.game_info.gameMode
             ) {  
                 console.log(data_to_object.info.game_info.gameMode);
+                lolParams.rankedGame = true;
             }
-            // if (data_to_object.game_info.gameMode == 'ranked') {
-              // lolParams.rankedGame = true;
-            // }
 
           case 'matchState': 
             if (
@@ -280,7 +270,7 @@ window.addEventListener('load', function () {
               data_to_object.info.game_info &&
               data_to_object.info.game_info.matchStarted
             ) {
-              console.log('MATCH_STARTED');
+              console.log('MATCH STARTED');
               lolParams.gameStarted = true;
             }
 
@@ -291,12 +281,12 @@ window.addEventListener('load', function () {
               data_to_object.info.game_info &&
               data_to_object.info.game_info.matchOutcome
             ) {
-              console.log('MATCH_ENDED');
+              console.log('MATCH ENDED');
               lolParams.victory = data_to_object.info.game_info.matchOutcome;
               lolParams.gameEnded = true;
 
               if (lolParams.gameEnded && lolParams.gameInProcess) {
-                console.log('GAME_END');
+                console.log('GAME END');
 
                 var isWinner;
 
@@ -313,16 +303,6 @@ window.addEventListener('load', function () {
                 lolParams.level = parseInt(lolParams.level) ? parseInt(lolParams.level) : 0;
 
                 lolParams.minionKills = parseInt(lolParams.minionKills) ? parseInt(lolParams.minionKills) : 0;
-
-                console.log('------------------------');
-                console.log('COUNT KDA');
-                console.log('KILLS');
-                console.log(lolParams.kills);
-                console.log('ASSISTS');
-                console.log(lolParams.assists);
-                console.log('DEATHS');
-                console.log(lolParams.deaths);
-                console.log('------------------------');
 
                 var kda = (lolParams.kills + lolParams.assists) / (lolParams.deaths + 1);
 
@@ -375,8 +355,6 @@ window.addEventListener('load', function () {
                   secret: secret
                 });
 
-                console.log(endGameTrs);
-
                 sendEndGameTrs(endGameTrs);
 
                 lolParams.gameInProcess = false;
@@ -392,28 +370,20 @@ window.addEventListener('load', function () {
             break;
 
           case 'minions':
-            console.log('MINION KILLS');
             lolParams.minionKills = data_to_object.info.game_info.minionKills;
-            console.log(lolParams.minionKills);
 
             break;  
 
           case 'level':
-            console.log('LEVEL');
             lolParams.level = data_to_object.info.level.level;
-            console.log(lolParams.level);
             break;
 
           case 'kill':
-            console.log('KILLS');
             lolParams.kills = data_to_object.info.game_info.kills;
-            console.log(lolParams.kills);
             break;
 
           case 'death':
-            console.log('DEATHS');
             lolParams.deaths = data_to_object.info.game_info.deaths;
-            console.log(lolParams.deaths);
             break;
         }
 
@@ -433,8 +403,6 @@ window.addEventListener('load', function () {
             secret: secret
           });
 
-          console.log(startGameTrs);
-
           sendStartGameTrs(startGameTrs);
 
           lolParams.gameInProcess = true;
@@ -443,18 +411,14 @@ window.addEventListener('load', function () {
     });
 
     overwolf.games.events.onNewEvents.addListener(function(info) {
-      console.log('lol current 3 game?', currentGame);
       if (currentGame == 'League of Legends') { 
         var log = 'EVENT FIRED: ' + JSON.stringify(info);
 
-        console.log(info);
         for (var i = info.events.length - 1; i >= 0; i--) {
 
           switch(info.events[i].name) {
             case 'assist':
-              console.log('ASSISTS');
               lolParams.assists = JSON.parse(info.events[i].data).count;
-              console.log(lolParams.assists);
               break;
           }
         }
@@ -463,16 +427,13 @@ window.addEventListener('load', function () {
   }
 
   function getDotaEvents() {
-    console.log('REGISTERING DOTA EVENTS');
     overwolf.games.events.onError.addListener(function(info) {
-      console.log('dota current 1 game?', currentGame);
       if (currentGame == 'Dota 2') {
         console.log('Error: ' + JSON.stringify(info));
       }
     });
 
     overwolf.games.events.onInfoUpdates2.addListener(function(info) {
-      console.log('dota current 2 game?', currentGame);
       if (currentGame == 'Dota 2') {
         var log = 'Info UPDATE: ' + JSON.stringify(info);
 
@@ -488,7 +449,6 @@ window.addEventListener('load', function () {
     });
 
     overwolf.games.events.onNewEvents.addListener(function(info) {
-      console.log('dota current 3 game?', currentGame);
       if (currentGame == 'Dota 2') {
         var log = 'EVENT FIRED: ' + JSON.stringify(info);
 
@@ -499,7 +459,7 @@ window.addEventListener('load', function () {
           // Switch event name
           switch(info.events[i].name) {
             case 'match_detected': 
-              console.log('INTERESTING IF EVER HAPPENS!!!!')
+              console.log('INTERESTING IF EVER HAPPENS!')
               
               dotaParams.allPlayers = data_to_object.match_detected.playersInfo
               
@@ -519,28 +479,16 @@ window.addEventListener('load', function () {
 
             case 'match_state_changed':
               console.log('MATCH STATE CHANGED!')
-              console.log(data_to_object.match_state);
 
               if (
                 !(dotaParams.gameStarted) &&
                 !(dotaParams.gameInProcess) && 
                 data_to_object.match_state == 'DOTA_GAMERULES_STATE_GAME_IN_PROGRESS'
               ) {
-                console.log('DOTA_GAMERULES_STATE_GAME_IN_PROGRESS!!!!!!!!!!!!');
-                console.log(data_to_object);
+                console.log('DOTA_GAMERULES_STATE_GAME_IN_PROGRESS!');
 
                 dotaParams.gameStarted = data_to_object;
               } 
-
-              // DOUBTS - should be deleted
-              if (
-                dotaParams.gameStarted &&
-                dotaParams.gameInProcess && 
-                data_to_object.match_state == 'DOTA_GAMERULES_STATE_POST_GAME'
-              ) {
-                console.log('DOTA_GAMERULES_STATE_POST_GAME'); 
-                console.log('BOMBOM!!!!');
-              }
 
               if (data_to_object.match_state == 'DOTA_GAMERULES_STATE_STRATEGY_TIME') {
                 dotaParams.gameInProcess = false;
@@ -556,7 +504,7 @@ window.addEventListener('load', function () {
               dotaParams.gameEnded = data_to_object;
               // Send transaction for Game Ended
               if (matchId && dotaParams.gameEnded && dotaParams.gameInProcess) {
-                console.log('GAME_END');
+                console.log('GAME END');
               
                 var winnerTeam = dotaParams.gameEnded.winner;
                 var isWinner;
@@ -663,8 +611,6 @@ window.addEventListener('load', function () {
                   secret: secret
                 });
 
-                console.log(endGameTrs);
-
                 sendEndGameTrs(endGameTrs); 
                 
                 dotaParams.gameInProcess = false;
@@ -682,56 +628,38 @@ window.addEventListener('load', function () {
               break;
 
             case 'game_state_changed':
-              if (data_to_object.match_id) console.log('MATH IDIDIIDID - ', data_to_object.match_id);
               if(!matchId && data_to_object.match_id) {
                 matchId = data_to_object.match_id
-                console.log('MATCH_ID');
-                console.log(matchId);
               }
 
               if (!dotaParams.steamId && data_to_object.player_steam_id) {
                 dotaParams.steamId = data_to_object.player_steam_id;
-                console.log('STEAM_ID');
-                console.log(dotaParams.steamId);
               }
               break;
 
             case 'kill':
-              console.log('KILL');
               dotaParams.kills = data_to_object.kills;
-              console.log(dotaParams.kills);
               break;
 
             case 'assist':
-              console.log('ASSIST');
               dotaParams.assists = data_to_object.assists;
-              console.log(dotaParams.assists);
               break;
 
             case 'death':
-              console.log('DEATH');
               dotaParams.deaths = data_to_object.deaths;
-              console.log(dotaParams.deaths);
               break;
 
             case 'xpm':
-              console.log('XPM');
               dotaParams.xpm = data_to_object.xpm;
-              console.log(dotaParams.xpm);
               break;
 
             case 'gpm':
-              console.log('GPM');
               dotaParams.gpm = data_to_object.gpm;
-              console.log(dotaParams.gpm);
               break;
 
             case 'cs':
-              console.log('CS');
               dotaParams.lastHits = data_to_object.last_hits;
               dotaParams.denies = data_to_object.denies;
-              console.log('lst', dotaParams.lastHits);
-              console.log('den', dotaParams.denies);
               break
           }
 
@@ -752,8 +680,6 @@ window.addEventListener('load', function () {
               secret: secret
             });
 
-            console.log(startGameTrs);
-
             sendStartGameTrs(startGameTrs);
 
             dotaParams.gameInProcess = true;
@@ -764,8 +690,6 @@ window.addEventListener('load', function () {
   }
 
   function gameLaunched(gameInfoResult) {
-    console.log(gameInfoResult);
-
     if (!gameInfoResult) {
         return undefined;
     }
@@ -798,8 +722,6 @@ window.addEventListener('load', function () {
   }
 
   function gameRunning(gameInfo) {
-    console.log(gameInfo);
-
     if (!gameInfo) {
       return undefined;
     }
@@ -827,7 +749,6 @@ window.addEventListener('load', function () {
   function setDotaFeatures() {
     console.log('Setting features for Dota'); 
     overwolf.games.events.setRequiredFeatures(dotaFeatures, function(info) {
-      console.log(info);
       if (info.status == 'error') {
           window.setTimeout(setDotaFeatures, 2000);
           return;
@@ -838,7 +759,6 @@ window.addEventListener('load', function () {
   function setLoLFeatures() {
     console.log('Setting features for LoL'); 
     overwolf.games.events.setRequiredFeatures(lolFeatures, function(info) {
-      console.log(info);
       if (info.status == 'error') {
           window.setTimeout(setLoLFeatures, 2000);
           return;
@@ -852,8 +772,6 @@ window.addEventListener('load', function () {
     var gameTtile = gameLaunched(res);
     
     currentGame = gameTtile ? gameTtile : currentGame;
-
-    console.log(currentGame);
 
     if (gameTtile) {
       if (gameTtile === 'Dota 2') {
@@ -873,8 +791,6 @@ window.addEventListener('load', function () {
     var gameTtile = gameRunning(res)
     
     currentGame = gameTtile ? gameTtile : currentGame;
-
-    console.log(currentGame);
 
     if (gameTtile) {
       if (gameTtile === 'Dota 2') {

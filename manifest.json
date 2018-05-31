@@ -5,9 +5,9 @@
     "name": "Buff Achievement Tracker",
     "version": "0.0.2",
     "minimum-overwolf-version": "0.92.300.0",
-    "author": "Overwolf",
-    "icon": "icon.png",
-    "icon_gray": "icon_gray.png",
+    "author": "buff.game",
+    "icon": "iconMouseNormal.png",
+    "icon_gray": "iconMouseOver.png",
     "description": "Buff client"
   },
   "permissions": [
