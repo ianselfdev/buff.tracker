@@ -3,12 +3,13 @@ window.addEventListener('load', function () {
 
   console.log('Buff App Started');
 
-  const senderIdInput = document.getElementById('senderId');
-  const passphraseInput = document.getElementById('passphrase');
-  const validButton = document.getElementById('validUser');
-  const buffTitle = document.getElementById('title');
-  const buffInfo = document.getElementById('info');
-  const applyForm = document.getElementById('applyForm');
+  var senderIdInput = document.getElementById('senderId');
+  var passphraseInput = document.getElementById('passphrase');
+  var validButton = document.getElementById('validUser');
+  var buffTitle = document.getElementById('title');
+  var buffInfo = document.getElementById('info');
+  var applyForm = document.getElementById('applyForm');
+  var hrs = document.getElementsByTagName('hr');
 
   var loggedIn,
     hidden,
@@ -201,10 +202,15 @@ window.addEventListener('load', function () {
           passphrase = userSecret;
           alert('Successfully logged in!');
 
-          applyForm.style.visibility = "none";
+          applyForm.style.visibility = 'none';
+          senderIdInput.style.visibility = 'hidden';
+          passphraseInput.style.visibility = 'hidden';
           validButton.style.visibility = 'hidden';
           buffInfo.style.visibility = 'hidden';
-          buffTitle.innerText = 'Logged in!'
+          buffTitle.innerText = 'Buff Tracking...';
+          
+          hrs[0].style.visibility = 'hidden';
+          hrs[1].style.visibility = 'hidden';
 
           loggedIn = true;
         } else {

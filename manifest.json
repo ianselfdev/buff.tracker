@@ -20,10 +20,10 @@
         "file": "index.html",
         "transparent": false,
         "clickthrough": true,
-        "resizable": false,
+        "resizable": true,
         "show_in_taskbar": true,
         "size": {
-          "width": 220,
+          "width": 320,
           "height": 400
         },
         "start_position": {
