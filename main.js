@@ -237,7 +237,7 @@ window.addEventListener('load', function () {
   }
 
   function getLolEvents() {
-    console.log('REGISTERING DOTA EVENTS');
+    console.log('REGISTERING LoL EVENTS');
     overwolf.games.events.onError.addListener(function(info) {
       if (currentGame == 'League of Legends') {
         console.log('Error: ' + JSON.stringify(info));
@@ -355,6 +355,8 @@ window.addEventListener('load', function () {
                   secret: secret
                 });
 
+                console.log(endGameTrs);
+
                 sendEndGameTrs(endGameTrs);
 
                 lolParams.gameInProcess = false;
@@ -370,20 +372,27 @@ window.addEventListener('load', function () {
             break;
 
           case 'minions':
+            console.log('minions');
             lolParams.minionKills = data_to_object.info.game_info.minionKills;
-
+            console.log(lolParams.minionKills);
             break;  
 
           case 'level':
+            console.log('level');
             lolParams.level = data_to_object.info.level.level;
+            console.log(lolParams.level);
             break;
 
           case 'kill':
+            console.log('kill');
             lolParams.kills = data_to_object.info.game_info.kills;
+            console.log(lolParams.kills);
             break;
 
           case 'death':
+            console.log('death');
             lolParams.deaths = data_to_object.info.game_info.deaths;
+            console.log(lolParams.deaths);
             break;
         }
 
