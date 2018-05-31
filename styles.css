@@ -1,0 +1,56 @@
+body {
+  font-family: 'Helvetica', 'Arial', serif;
+  color: #e2e0e0;
+  font-size: 11pt;
+  background-color: #212322;
+  text-align: center;
+}
+
+#title {
+  text-align: center;
+  font-weight: 500;
+  font-size: 26pt;
+  color: #45b760;
+}
+
+#container {
+  margin: auto;
+  padding: 10px;
+  width: 50%;
+}
+
+#container form {
+  display: inline-block;
+}
+
+#container input {
+  width: 100%;
+  margin-top: 20%;
+  background: transparent;
+  color: white;
+  border: none;
+}
+
+#container input:hover {
+  outline: none;
+}
+
+
+#container button {
+  width: 30%;
+  height: 4%;
+  border-radius: 2px;
+  font-size: 12px;
+  box-sizing: border-box;
+  background-color: #4CAF50;
+  color: #e2e0e0;
+  font-family: 'Helvetica', 'Arial', serif;
+  font-weight: 500;
+  border-radius:2px;
+  display:inline-block;
+  text-decoration:none;
+}
+
+#container button:hover {
+  outline: none;
+}

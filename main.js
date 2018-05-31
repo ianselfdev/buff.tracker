@@ -5,10 +5,10 @@ window.addEventListener('load', function () {
 
   const senderIdInput = document.getElementById('senderId');
   const passphraseInput = document.getElementById('passphrase');
-  const textarea = document.getElementById('msgTxtArea');
   const validButton = document.getElementById('validUser');
-  const buffIcon = document.getElementById('buffIcon');
   const buffTitle = document.getElementById('title');
+  const buffInfo = document.getElementById('info');
+  const applyForm = document.getElementById('applyForm');
 
   var loggedIn,
     hidden,
@@ -101,34 +101,10 @@ window.addEventListener('load', function () {
 
   var matchId = 1;
 
-
-  buffIcon.onclick = function () {
-    if (!hidden) {
-      hidden = true;
-      senderIdInput.style.visibility = 'hidden';
-      passphraseInput.style.visibility = 'hidden';
-      textarea.style.visibility = 'hidden';
-      validButton.style.visibility = 'hidden';
-      buffTitle.style.visibility = 'hidden';
-    } else {
-      if (loggedIn) {
-         textarea.style.visibility = 'visible';
-         textarea.value = 'Logged in';
-      } else {
-        hidden = false;
-        senderIdInput.style.visibility = 'visible';
-        passphraseInput.style.visibility = 'visible';
-        textarea.style.visibility = 'visible';
-        validButton.style.visibility = 'visible';
-        buffTitle.style.visibility = 'visible';
-      }
-    }
-  }
-
   validButton.onclick = function () {
     if (
-      senderIdInput.value != undefined && 
-      passphraseInput.value != undefined
+      senderIdInput.value != '' && 
+      passphraseInput.value != ''
     ) {
 
       senderId = senderIdInput.value;
@@ -138,11 +114,17 @@ window.addEventListener('load', function () {
         if (data.verified === true) {
           validUser(publicKey, passphrase);  
         } else {
-          textarea.value = 'Invalid address!';  
+          alert('Invalid address');
         }
       });
+    } else if (passphraseInput.value != '' && 
+      senderIdInput.value == '') {
+      alert('Missing address');
+    } else if (senderIdInput.value != '' &&
+      passphraseInput.value == '') {
+      alert('Missing passphrase');
     } else {
-      textarea.value = 'Empty fields!';
+      alert('Missing fields');
     }
   }
 
@@ -199,10 +181,9 @@ window.addEventListener('load', function () {
         if (response.success == true && response.publicKey) {
           publicKey = response.publicKey;
           return cb ({ verified: true });
-        } else {
-          textarea.value = 'Invalid address!';
         }
-      } 
+        return cb ({verified: false});
+      }
     }
     xhr.send({ address: senderId });
   }
@@ -220,14 +201,14 @@ window.addEventListener('load', function () {
           passphrase = userSecret;
           alert('Successfully logged in!');
 
-          senderIdInput.style.visibility = 'hidden';
-          passphraseInput.style.visibility = 'hidden';
-          textarea.style.visibility = 'hidden';
+          applyForm.style.visibility = "none";
           validButton.style.visibility = 'hidden';
+          buffInfo.style.visibility = 'hidden';
+          buffTitle.innerText = 'Logged in!'
 
           loggedIn = true;
         } else {
-          textarea.value = response.error;
+          alert(response.error);
         }
       }
     }
