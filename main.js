@@ -1,18 +1,22 @@
 window.addEventListener('load', function () {
-  alert(`If you're not logged in your Buff account you won't get game reward!`);
-
   console.log('Buff App Started');
+
+  var buffTitle = document.getElementById('title');
+  var buffInfo = document.getElementById('info');
+  var buffExplanation = document.getElementById('explanation');
+
+  var applyForm = document.getElementById('applyForm');
 
   var senderIdInput = document.getElementById('senderId');
   var passphraseInput = document.getElementById('passphrase');
   var validButton = document.getElementById('validUser');
-  var buffTitle = document.getElementById('title');
-  var buffInfo = document.getElementById('info');
-  var applyForm = document.getElementById('applyForm');
-  var hrs = document.getElementsByTagName('hr');
+
+  var lorchuButton = document.getElementById('lorchu');
+  console.log(lorchuButton);
+
+  var exitButton = document.getElementById('exit');
 
   var loggedIn,
-    hidden,
     senderId,
     passphrase,
     publicKey,
@@ -107,7 +111,6 @@ window.addEventListener('load', function () {
       senderIdInput.value != '' && 
       passphraseInput.value != ''
     ) {
-
       senderId = senderIdInput.value;
       passphrase = passphraseInput.value;
 
@@ -127,6 +130,30 @@ window.addEventListener('load', function () {
     } else {
       alert('Missing fields');
     }
+  }
+
+  lorchuButton.onclick = function () {
+    senderId = undefined;
+    passphrase = undefined;
+    publicKey = undefined;
+
+    buffTitle.innerText = 'Buff Achievement Tracker';
+    buffInfo.innerText = 'Welcome to Buff Achievement Tracker';
+    buffExplanation.style.visibility = 'visible';
+
+    applyForm.style.visibility = 'visible';
+
+    lorchuButton.style.visibility = 'hidden';
+    exitButton.style.visibility = 'hidden';        
+
+    senderIdInput.value = ''; 
+    passphraseInput.value = '';
+
+    loggedIn = false;
+  }
+
+  exitButton.onclick = function () {
+    window.close();
   }
 
   // without signatures for now
@@ -202,15 +229,14 @@ window.addEventListener('load', function () {
           passphrase = userSecret;
           alert('Successfully logged in!');
 
-          applyForm.style.visibility = 'none';
-          senderIdInput.style.visibility = 'hidden';
-          passphraseInput.style.visibility = 'hidden';
-          validButton.style.visibility = 'hidden';
-          buffInfo.style.visibility = 'hidden';
-          buffTitle.innerText = 'Buff Tracking...';
-          
-          hrs[0].style.visibility = 'hidden';
-          hrs[1].style.visibility = 'hidden';
+          buffTitle.innerText = 'Buff Tracking in Progress';
+          buffInfo.innerText = 'You can start playing your favorite game!';
+          buffExplanation.style.visibility = 'hidden';
+
+          applyForm.style.visibility = 'hidden';
+
+          lorchuButton.style.visibility = 'visible';
+          exitButton.style.visibility = 'visible';        
 
           loggedIn = true;
         } else {
