@@ -19,12 +19,12 @@
       "index": {
         "file": "index.html",
         "transparent": false,
-        "clickthrough": true,
-        "resizable": true,
+        "clickthrough": false,
+        "resizable": false,
         "show_in_taskbar": true,
         "size": {
-          "width": 700,
-          "height": 500
+          "width": 600,
+          "height": 900
         },
         "start_position": {
           "Top": 100,

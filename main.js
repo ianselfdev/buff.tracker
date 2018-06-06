@@ -1,4 +1,11 @@
 window.addEventListener('load', function () {
+  // overwolf.windows.getCurrentWindow(function(result) {
+  //   if(result.status === "success") {
+  //     overwolf.windows.changeSize(result.window.id, 600, 900, function(res) {
+  //       console.log(res);
+  //     })
+  //   }
+  // });
   console.log('Buff App Started');
 
   var buffTitle = document.getElementById('title');
