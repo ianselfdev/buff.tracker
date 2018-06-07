@@ -2,12 +2,12 @@
   "manifest_version": "1",
   "type": "WebApp",
   "meta": {
-    "name": "Buff client",
+    "name": "Buff Achievement Tracker",
     "version": "0.0.2",
     "minimum-overwolf-version": "0.92.300.0",
-    "author": "Overwolf",
-    "icon": "icon.png",
-    "icon_gray": "icon_gray.png",
+    "author": "buff.game",
+    "icon": "iconMouseNormal.png",
+    "icon_gray": "iconMouseOver.png",
     "description": "Buff client"
   },
   "permissions": [
@@ -20,28 +20,30 @@
         "file": "index.html",
         "transparent": false,
         "clickthrough": false,
-        "resizable": true,
+        "resizable": false,
         "show_in_taskbar": true,
         "size": {
-          "width": 115,
-          "height": 135
+          "width": 600,
+          "height": 900
         },
         "start_position": {
-          "Top": 10,
-          "Left": 10
+          "Top": 100,
+          "Left": 100
         }
       }
     },
-    "game_events": [7314],
+    "game_events": [7314,5426],
     "launch_events": [
       {
         "event": "GameLaunch",
         "event_data": {
           "game_ids": [
-            7314
+            7314,
+            5426
           ]
         },
         "start_minimized": false
-      }]
-}
+      }
+    ]
+  }
 }

@@ -1,10 +1,27 @@
 <html>
 <head>
-  <title>DOTA Sample App</title>
-  <script src="main.js"></script>
-</head>
+  <title>Buff Achievement Tracker</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+  </head>
 <body>
-<h3 id="title">DOTA Sample App</h3>
-<textarea id="textareaMessage" rows="10" readonly="true"></textarea>
+    <div id="container">
+      <h3 id="title">Buff Achievement Tracker</h3>
+      <h4 id="info">Welcome to Buff Achievement Tracker</h4>
+      <div id="explanation">
+        <p>In order to get started you have to sign events transactions with your credentials.</p>
+        <p>You received it via email after registration in buff.app</p>
+      <div>
+      <form id="applyForm">
+        <input type="text" placeholder="Put here your address" id="senderId"></br>
+        <hr>
+        <input type="text" placeholder="Put here your secret" id="passphrase"></br>
+        <hr>
+      </form>
+      </br>
+      <button id="validUser" class="btn">Apply</button>
+      <button id="lorchu" class="btn">Logout or Change User</button>
+      <button id="exit" class="btn">Exit</button>
+    </div>
 </body>
+<script src="main.js"></script>
 </html>
