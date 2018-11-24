@@ -404,7 +404,7 @@ window.addEventListener('load', function () {
             if (data_to_object.info.game_info.minionKills == undefined){
 
               lolParams.neutralMinionKills = data_to_object.info.game_info.neutralMinionKills;
-              console.log('minions');
+              console.log('monsters');
               console.log(lolParams.neutralMinionKills);
             }else if (data_to_object.info.game_info.neutralMinionKills == undefined){
                 lolParams.minionKills = data_to_object.info.game_info.minionKills;
