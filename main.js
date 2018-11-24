@@ -172,7 +172,9 @@ window.addEventListener('load', function () {
     xhr.setRequestHeader('Content-Type','application/json');
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4 && xhr.status === 200) {
-        console.log(JSON.parse(xhr.responseText));
+        var sgt = (JSON.parse(xhr.responseText));
+        console.log('transaction ID: ');
+        console.log(sgt.transactionId);
       }
     };
     console.log('SEND START GAME TX');
@@ -186,7 +188,9 @@ window.addEventListener('load', function () {
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4 && xhr.status === 200) {
-        console.log(JSON.parse(xhr.responseText));
+        var egt = (JSON.parse(xhr.responseText));
+        console.log('transaction ID: ');
+        console.log(egt.transactionId);
       }
     };
     console.log('SEND END GAME TX');
