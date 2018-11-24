@@ -7,8 +7,15 @@ import './index.scss';
 //Instruments
 //eslint-disable-next-line
 import { _validateAddress, _validateUser } from './instruments/logging';
+import {gameRunning, gameLaunched, _getRunningGameInfo, _onGameInfoUpdated} from './instruments/OWListeners';
 
 export default class Tracker extends Component {
+
+    componentDidMount = () => {
+        _getRunningGameInfo();
+        _onGameInfoUpdated();
+    }
+
     state = {
         logged: false,
 

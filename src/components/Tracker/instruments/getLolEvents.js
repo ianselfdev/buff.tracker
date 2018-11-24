@@ -1,5 +1,7 @@
 import { _sendStartGameTrs, _sendEndGameTrs } from './gamestats';
 
+/*eslint-disable no-undef*/
+
 let currentGame = null;
 let matchId = 1;
 

@@ -1,6 +1,8 @@
 import { _getDotaEvents, setDotaFeatures } from './getDotaEvents';
 import { _getLolEvents, setLoLFeatures } from './getLolEvents';
 
+/*eslint-disable no-undef*/
+
 let currentGame = null;
 
 export const gameLaunched = (gameInfoResult) => {
