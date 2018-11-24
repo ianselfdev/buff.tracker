@@ -64,12 +64,13 @@ window.addEventListener('load', function () {
     assists: 0,
 
     minionKills: 0,
+    neutralMinionKills: 0,
 
     level: 0,
 
     rankedGame: undefined,
     victory: undefined,
-    
+
     matchId: undefined,
     allPlayers: undefined
   };
@@ -115,7 +116,7 @@ window.addEventListener('load', function () {
 
   validButton.onclick = function () {
     if (
-      senderIdInput.value != '' && 
+      senderIdInput.value != '' &&
       passphraseInput.value != ''
     ) {
       senderId = senderIdInput.value;
@@ -123,12 +124,12 @@ window.addEventListener('load', function () {
 
       validSenderId(senderId, function (data) {
         if (data.verified === true) {
-          validUser(publicKey, passphrase);  
+          validUser(publicKey, passphrase);
         } else {
           alert('Invalid address');
         }
       });
-    } else if (passphraseInput.value != '' && 
+    } else if (passphraseInput.value != '' &&
       senderIdInput.value == '') {
       alert('Missing address');
     } else if (senderIdInput.value != '' &&
@@ -151,9 +152,9 @@ window.addEventListener('load', function () {
     applyForm.style.visibility = 'visible';
 
     lorchuButton.style.visibility = 'hidden';
-    exitButton.style.visibility = 'hidden';        
+    exitButton.style.visibility = 'hidden';
 
-    senderIdInput.value = ''; 
+    senderIdInput.value = '';
     passphraseInput.value = '';
 
     loggedIn = false;
@@ -212,7 +213,7 @@ window.addEventListener('load', function () {
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4 && xhr.status === 200) {
         var response = JSON.parse(xhr.responseText);
-        
+
         if (response.success == true && response.publicKey) {
           publicKey = response.publicKey;
           return cb ({ verified: true });
@@ -243,7 +244,7 @@ window.addEventListener('load', function () {
           applyForm.style.visibility = 'hidden';
 
           lorchuButton.style.visibility = 'visible';
-          exitButton.style.visibility = 'visible';        
+          exitButton.style.visibility = 'visible';
 
           loggedIn = true;
         } else {
@@ -271,18 +272,18 @@ window.addEventListener('load', function () {
         var data_to_object = info;
 
         switch (data_to_object.feature) {
-          case 'gameMode': 
+          case 'gameMode':
             console.log('GAME MODE');
             if (
-              data_to_object.info && 
+              data_to_object.info &&
               data_to_object.game_info &&
               data_to_object.info.game_info.gameMode
-            ) {  
+            ) {
                 console.log(data_to_object.info.game_info.gameMode);
                 lolParams.rankedGame = true;
             }
 
-          case 'matchState': 
+          case 'matchState':
             if (
               !(lolParams.gameStarted) &&
               !(lolParams.gameInProcess) &&
@@ -324,7 +325,8 @@ window.addEventListener('load', function () {
 
                 lolParams.minionKills = parseInt(lolParams.minionKills) ? parseInt(lolParams.minionKills) : 0;
 
-                var kda = (lolParams.kills + lolParams.assists) / (lolParams.deaths + 1);
+                if (lolParams.deaths == 0){lolParams.deaths +=1};
+                var kda = (lolParams.kills + lolParams.assists) / (lolParams.deaths);
 
                 var reward = 0;
 
@@ -336,14 +338,16 @@ window.addEventListener('load', function () {
                 if (kda >= 2.6 && kda <= 2.8) reward += 5;
                 if (kda >= 1.5 && kda <= 2.5) reward += 2;
 
-                if (lolParams.minionKills >= 300) reward += 20;
-                if (lolParams.minionKills >= 276 && lolParams.minionKills <= 299) reward += 17;
-                if (lolParams.minionKills >= 251 && lolParams.minionKills <= 275) reward += 14;
-                if (lolParams.minionKills >= 226 && lolParams.minionKills <= 250) reward += 12;
-                if (lolParams.minionKills >= 201 && lolParams.minionKills <= 225) reward += 10;
-                if (lolParams.minionKills >= 176 && lolParams.minionKills <= 200) reward += 7;
-                if (lolParams.minionKills >= 151 && lolParams.minionKills <= 175) reward += 4;
-                if (lolParams.minionKills >= 126 && lolParams.minionKills <= 150) reward += 2;
+                var creepScore = (lolParams.minionKills + lolParams.neutralMinionKills);
+
+                if (creepScore >= 300) reward += 20;
+                if (creepScore >= 276 && creepScore <= 299) reward += 17;
+                if (creepScore >= 251 && creepScore <= 275) reward += 14;
+                if (creepScore >= 226 && creepScore <= 250) reward += 12;
+                if (creepScore >= 201 && creepScore <= 225) reward += 10;
+                if (creepScore >= 176 && creepScore <= 200) reward += 7;
+                if (creepScore >= 151 && creepScore <= 175) reward += 4;
+                if (creepScore >= 126 && creepScore <= 150) reward += 2;
 
                 if (lolParams.level >= 18) reward += 15;
                 if (lolParams.level >= 16 && lolParams.level <= 17) reward += 12;
@@ -358,7 +362,7 @@ window.addEventListener('load', function () {
                   gameId: 5426,
                   rankedGame: true,
                   kda: kda,
-                  minion_kills: lolParams.minionKills,
+                  minion_kills: creepScore,
                   level: lolParams.level,
                   victory: isWinner,
                   reward: reward
@@ -386,16 +390,24 @@ window.addEventListener('load', function () {
                 lolParams.assists = 0;
                 lolParams.deaths = 0;
                 lolParams.minionKills = 0;
+                lolParams.neutralMinionKills = 0;
                 lolParams.level = 0;
               }
             }
             break;
 
           case 'minions':
-            console.log('minions');
-            lolParams.minionKills = data_to_object.info.game_info.minionKills;
-            console.log(lolParams.minionKills);
-            break;  
+            if (data_to_object.info.game_info.minionKills == undefined){
+
+              lolParams.neutralMinionKills = data_to_object.info.game_info.neutralMinionKills;
+              console.log('minions');
+              console.log(lolParams.neutralMinionKills);
+            }else if (data_to_object.info.game_info.neutralMinionKills == undefined){
+                lolParams.minionKills = data_to_object.info.game_info.minionKills;
+                console.log('minions');
+                console.log(lolParams.minionKills);
+            };
+            break;
 
           case 'level':
             console.log('level');
@@ -440,7 +452,7 @@ window.addEventListener('load', function () {
     });
 
     overwolf.games.events.onNewEvents.addListener(function(info) {
-      if (currentGame == 'League of Legends') { 
+      if (currentGame == 'League of Legends') {
         var log = 'EVENT FIRED: ' + JSON.stringify(info);
 
         for (var i = info.events.length - 1; i >= 0; i--) {
@@ -468,11 +480,11 @@ window.addEventListener('load', function () {
 
         if(
           info.info &&
-          info.info.roster && 
+          info.info.roster &&
           info.info.roster.players
         ) {
           console.log(info.info.roster.players);
-          dotaParams.allPlayers = JSON.parse(info.info.roster.players);  
+          dotaParams.allPlayers = JSON.parse(info.info.roster.players);
         }
       }
     });
@@ -481,17 +493,17 @@ window.addEventListener('load', function () {
       if (currentGame == 'Dota 2') {
         var log = 'EVENT FIRED: ' + JSON.stringify(info);
 
-        for (var i = info.events.length - 1; i >= 0; i--) { 
+        for (var i = info.events.length - 1; i >= 0; i--) {
 
           var data_to_object = JSON.parse(info.events[i].data);
 
           // Switch event name
           switch(info.events[i].name) {
-            case 'match_detected': 
+            case 'match_detected':
               console.log('INTERESTING IF EVER HAPPENS!')
-              
+
               dotaParams.allPlayers = data_to_object.match_detected.playersInfo
-              
+
               dotaParams.allPlayers.forEach((player,index) => {
                 if(player.isLocalPlayer == true) {
                   dotaParams.playerTeam = player.faction
@@ -511,13 +523,13 @@ window.addEventListener('load', function () {
 
               if (
                 !(dotaParams.gameStarted) &&
-                !(dotaParams.gameInProcess) && 
+                !(dotaParams.gameInProcess) &&
                 data_to_object.match_state == 'DOTA_GAMERULES_STATE_GAME_IN_PROGRESS'
               ) {
                 console.log('DOTA_GAMERULES_STATE_GAME_IN_PROGRESS!');
 
                 dotaParams.gameStarted = data_to_object;
-              } 
+              }
 
               if (data_to_object.match_state == 'DOTA_GAMERULES_STATE_STRATEGY_TIME') {
                 dotaParams.gameInProcess = false;
@@ -534,7 +546,7 @@ window.addEventListener('load', function () {
               // Send transaction for Game Ended
               if (matchId && dotaParams.gameEnded && dotaParams.gameInProcess) {
                 console.log('GAME END');
-              
+
                 var winnerTeam = dotaParams.gameEnded.winner;
                 var isWinner;
 
@@ -543,10 +555,10 @@ window.addEventListener('load', function () {
                     if (player.steamId === dotaParams.steamId) {
                       if (player.team == 2) {
                         dotaParams.playerTeam = 'radiant';
-                      } 
+                      }
                       else if (player.team == 3) {
                         dotaParams.playerTeam = 'dire';
-                      } 
+                      }
                       else {
                         dotaParams.playerTeam = undefined;
                       }
@@ -616,8 +628,8 @@ window.addEventListener('load', function () {
 
                 if (isWinner) reward += 45;
 
-                var gamedata = {            
-                  matchId: 1,  
+                var gamedata = {
+                  matchId: 1,
                   gameId: 7314,
                   rankedGame: true,
                   xpm: dotaParams.xpm,
@@ -640,8 +652,8 @@ window.addEventListener('load', function () {
                   secret: secret
                 });
 
-                sendEndGameTrs(endGameTrs); 
-                
+                sendEndGameTrs(endGameTrs);
+
                 dotaParams.gameInProcess = false;
                 dotaParams.gameStarted = undefined;
                 dotaParams.gameEnded = undefined;
@@ -715,7 +727,7 @@ window.addEventListener('load', function () {
           }
         }
       }
-    });  
+    });
   }
 
   function gameLaunched(gameInfoResult) {
@@ -776,7 +788,7 @@ window.addEventListener('load', function () {
 
 
   function setDotaFeatures() {
-    console.log('Setting features for Dota'); 
+    console.log('Setting features for Dota');
     overwolf.games.events.setRequiredFeatures(dotaFeatures, function(info) {
       if (info.status == 'error') {
           window.setTimeout(setDotaFeatures, 2000);
@@ -786,7 +798,7 @@ window.addEventListener('load', function () {
   }
 
   function setLoLFeatures() {
-    console.log('Setting features for LoL'); 
+    console.log('Setting features for LoL');
     overwolf.games.events.setRequiredFeatures(lolFeatures, function(info) {
       if (info.status == 'error') {
           window.setTimeout(setLoLFeatures, 2000);
@@ -799,7 +811,7 @@ window.addEventListener('load', function () {
   overwolf.games.onGameInfoUpdated.addListener(function (res) {
     console.log('onGameInfoUpdated: ' + (res.gameInfo && res.gameInfo.title ? res.gameInfo.title : 'no title'));
     var gameTtile = gameLaunched(res);
-    
+
     currentGame = gameTtile ? gameTtile : currentGame;
 
     if (gameTtile) {
@@ -818,7 +830,7 @@ window.addEventListener('load', function () {
   overwolf.games.getRunningGameInfo(function (res) {
     console.log('getRunningGameInfo: ' + (res && res.title ? res.title : 'no title'));
     var gameTtile = gameRunning(res)
-    
+
     currentGame = gameTtile ? gameTtile : currentGame;
 
     if (gameTtile) {
