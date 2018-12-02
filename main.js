@@ -167,7 +167,7 @@ window.addEventListener('load', function () {
   // without signatures for now
   function sendStartGameTrs(tx)  {
     var xhr = new XMLHttpRequest();
-    var url = 'http://52.15.131.50:4000/api/game-start';
+    var url = 'http://18.188.224.32:4000/api/game-start';
     xhr.open('put', url, true);
     xhr.setRequestHeader('Content-Type','application/json');
     xhr.onreadystatechange = function () {
@@ -183,7 +183,7 @@ window.addEventListener('load', function () {
 
   function sendEndGameTrs(tx) {
     var xhr = new XMLHttpRequest();
-    var url = 'http://52.15.131.50:4000/api/game-end';
+    var url = 'http://18.188.224.32:4000/api/game-end';
     xhr.open('put', url, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.onreadystatechange = function () {
@@ -199,7 +199,7 @@ window.addEventListener('load', function () {
 
   function changeState(state) {
     var xhr = new XMLHttpRequest();
-    var url = 'http://52.15.131.50:4000/api/game-start/state';
+    var url = 'http://18.188.224.32:4000/api/game-start/state';
     xhr.open('put', url, true);
     xhr.setRequestHeader('Content-Type','application/json');
     xhr.onreadystatechange = function () {
@@ -212,7 +212,7 @@ window.addEventListener('load', function () {
 
   function validSenderId(senderId, cb) {
     var xhr = new XMLHttpRequest();
-    var url = `http://52.15.131.50:4000/api/accounts/getPublicKey?address=${senderId}`;
+    var url = `http://18.188.224.32:4000/api/accounts/getPublicKey?address=${senderId}`;
     xhr.open('get', url, true);
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4 && xhr.status === 200) {
@@ -230,7 +230,7 @@ window.addEventListener('load', function () {
 
   function validUser(userPubKey, userSecret, cb) {
     var xhr = new XMLHttpRequest();
-    var url = 'http://52.15.131.50:4000/api/game-start/verify';
+    var url = 'http://18.188.224.32:4000/api/game-start/verify';
     xhr.open('put', url, true);
     xhr.setRequestHeader('Content-Type','application/json');
     xhr.onreadystatechange = function () {
